@@ -12,6 +12,10 @@ import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { PortfolioHero } from '@/app/(frontend)/portfolio/components/PortfolioHero'
+import { PortfolioProjects } from '@/app/(frontend)/portfolio/components/PortfolioProjects'
+import { PortfolioContact } from '@/app/(frontend)/portfolio/components/PortfolioContact'
+import { PortfolioSkills } from '../portfolio/components'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -47,6 +51,17 @@ export default async function Page({ params: paramsPromise }: Args) {
   const { isEnabled: draft } = await draftMode()
   const { slug = 'home' } = await paramsPromise
   const url = '/' + slug
+
+  if (slug === 'portfolio') {
+    return (
+      <main className="portfolio-page">
+        <PortfolioHero />
+        <PortfolioSkills />
+        <PortfolioProjects />
+        <PortfolioContact />
+      </main>
+    )
+  }
 
   let page: RequiredDataFromCollectionSlug<'pages'> | null
 
