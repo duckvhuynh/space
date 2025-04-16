@@ -55,175 +55,118 @@ export function PortfolioHero() {
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   }
 
-  const title = "Hi, I'm Your Name"
+  const title = 'YOUR NAME'
+  const role = 'Digital Designer & Developer'
   const letters = Array.from(title)
 
   return (
-    <section className="min-h-[90vh] flex flex-col md:flex-row items-center gap-8 md:gap-16 pt-16 pb-24 md:py-12 relative overflow-hidden px-4 md:px-0">
-      <div className="absolute inset-0 -z-10 opacity-10">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-80 h-80 bg-primary/20 rounded-full blur-3xl"></div>
+    <section className="min-h-[100vh] flex flex-col items-center justify-center py-20 md:py-32 relative overflow-hidden">
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/10"></div>
+        <div className="absolute top-1/4 left-1/3 w-64 h-64 bg-neutral-100/5 rounded-full blur-[100px]"></div>
+        <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-neutral-100/5 rounded-full blur-[120px]"></div>
       </div>
 
-      <div className="flex-1 space-y-6 md:space-y-8 z-10 text-center md:text-left">
-        <motion.div initial={{ opacity: 0 }} animate={controls} className="space-y-4">
-          <Badge
-            variant="outline"
-            className="px-3 py-1 text-sm font-medium backdrop-blur bg-background/50 shadow-sm"
-          >
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ opacity: [0, 1, 0, 1] }}
-              transition={{ duration: 2, times: [0, 0.4, 0.5, 0.6], delay: 1 }}
-              className="inline-block w-2 h-2 bg-green-500 rounded-full mr-2"
-            ></motion.span>
-            Available for hire
-          </Badge>
+      <div className="relative z-10 text-center space-y-12 px-4">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
+          className="w-32 h-32 md:w-40 md:h-40 mx-auto relative"
+        >
+          <div className="absolute inset-0 rounded-full border border-neutral-800/20 animate-pulse"></div>
+          <Avatar className="w-full h-full border-2 border-neutral-800/10 shadow-2xl">
+            <AvatarImage src="/placeholder-avatar.jpg" alt="Profile" className="grayscale" />
+            <AvatarFallback className="text-4xl bg-neutral-100/5">YN</AvatarFallback>
+          </Avatar>
+        </motion.div>
 
+        <div className="space-y-6">
           <motion.h1
-            style={{ y: titleY }}
-            className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight"
+            variants={titleVariants}
+            initial="hidden"
+            animate="visible"
+            className="text-5xl sm:text-6xl md:text-8xl font-light tracking-tighter leading-none"
           >
-            <motion.span
-              variants={titleVariants}
-              initial="hidden"
-              animate="visible"
-              className="inline-block"
-            >
-              {letters.map((letter, index) => (
-                <motion.span
-                  key={index}
-                  variants={letterVariants}
-                  className="inline-block"
-                  style={{
-                    color:
-                      letter === "'"
-                        ? 'var(--primary)'
-                        : letter === 'N' || letter === 'Y'
-                          ? 'var(--primary)'
-                          : 'inherit',
-                  }}
-                >
-                  {letter === ' ' ? '\u00A0' : letter}
-                </motion.span>
-              ))}
-            </motion.span>
+            {letters.map((letter, index) => (
+              <motion.span
+                key={index}
+                variants={letterVariants}
+                className="inline-block"
+                style={{
+                  opacity: letter === ' ' ? 0 : 1,
+                }}
+              >
+                {letter === ' ' ? '\u00A0' : letter}
+              </motion.span>
+            ))}
           </motion.h1>
 
-          <motion.h2
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.8 }}
-            className="text-xl sm:text-2xl md:text-3xl text-muted-foreground font-medium"
           >
-            Full Stack Developer
-          </motion.h2>
-        </motion.div>
-
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          className="text-muted-foreground text-base sm:text-lg md:text-xl max-w-md mx-auto md:mx-0 leading-relaxed"
-        >
-          I build{' '}
-          <motion.span className="px-1 relative inline-block" whileHover={{ scale: 1.05 }}>
-            <motion.span
-              className="absolute inset-0 bg-primary/10 -z-10 rounded"
-              layoutId="highlight"
-            ></motion.span>
-            exceptional
-          </motion.span>{' '}
-          and accessible digital experiences for the web, focusing on minimalism and usability.
-        </motion.p>
+            <p className="text-base uppercase tracking-[0.25em] text-neutral-400 font-light">
+              {role}
+            </p>
+          </motion.div>
+        </div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1 }}
-          className="flex flex-col sm:flex-row gap-4 pt-4 items-center justify-center md:justify-start"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2, duration: 0.8 }}
+          className="flex flex-col items-center space-y-8"
         >
-          <MagneticButton
-            size="lg"
-            className="w-full sm:w-auto shadow-md hover:shadow-lg transition-shadow"
-          >
-            Contact Me
-            <ArrowRightIcon className="ml-2 h-4 w-4" />
-          </MagneticButton>
-          <MagneticButton
-            size="lg"
-            variant="outline"
-            className="w-full sm:w-auto backdrop-blur bg-background/50 shadow-sm hover:shadow-md transition-shadow"
-          >
-            View Resume
-          </MagneticButton>
-        </motion.div>
+          <p className="max-w-md text-neutral-300 font-light">
+            Creating minimal and elegant digital experiences that balance form and function.
+          </p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 1.2 }}
-          className="flex items-center gap-4 pt-4 justify-center md:justify-start"
-        >
-          {[
-            { icon: <GithubIcon className="h-5 w-5" />, label: 'GitHub' },
-            { icon: <LinkedinIcon className="h-5 w-5" />, label: 'LinkedIn' },
-            { icon: <TwitterIcon className="h-5 w-5" />, label: 'Twitter' },
-          ].map((social, i) => (
-            <MagneticButton
-              key={social.label}
-              size="icon"
-              variant="ghost"
-              className="rounded-full hover:bg-primary/10 transition-colors"
-              strength={40}
-            >
-              {social.icon}
-              <span className="sr-only">{social.label}</span>
-            </MagneticButton>
-          ))}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.4 }}
+            className="flex gap-8 pt-4"
+          >
+            {[
+              { icon: <GithubIcon className="h-5 w-5" />, label: 'GitHub' },
+              { icon: <LinkedinIcon className="h-5 w-5" />, label: 'LinkedIn' },
+              { icon: <TwitterIcon className="h-5 w-5" />, label: 'Twitter' },
+            ].map((social, i) => (
+              <MagneticButton
+                key={social.label}
+                size="icon"
+                variant="ghost"
+                className="rounded-full hover:bg-neutral-100/10 transition-colors"
+                strength={40}
+              >
+                {social.icon}
+                <span className="sr-only">{social.label}</span>
+              </MagneticButton>
+            ))}
+          </motion.div>
         </motion.div>
       </div>
-
-      <motion.div
-        style={{ scale: avatarScale, opacity: avatarOpacity }}
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, delay: 0.4 }}
-        className="flex-shrink-0 relative w-48 h-48 sm:w-56 sm:h-56 md:w-72 md:h-72 mx-auto mt-8 md:mt-0"
-      >
-        <div className="absolute inset-0 -z-10 bg-primary/20 rounded-full blur-3xl opacity-30"></div>
-
-        <Avatar className="w-full h-full border-4 border-background shadow-2xl ring-2 ring-primary/20">
-          <AvatarImage src="/placeholder-avatar.jpg" alt="Profile" />
-          <AvatarFallback className="text-4xl md:text-5xl bg-primary/10">YN</AvatarFallback>
-        </Avatar>
-      </motion.div>
 
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 1 }}
+        transition={{ delay: 1.8, duration: 1 }}
+        className="absolute bottom-8"
       >
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex md:hidden rounded-full shadow-md backdrop-blur bg-background/50"
-          onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
+        <motion.div
+          animate={{
+            y: [0, 8, 0],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
         >
-          <motion.div
-            animate={{
-              y: [0, 5, 0],
-            }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          >
-            <ArrowDownIcon className="h-6 w-6" />
-          </motion.div>
-          <span className="sr-only">Scroll down</span>
-        </Button>
+          <ArrowDownIcon className="h-6 w-6 text-neutral-400" />
+        </motion.div>
       </motion.div>
     </section>
   )

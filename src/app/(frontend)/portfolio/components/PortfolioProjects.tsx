@@ -1,18 +1,10 @@
 'use client'
 
 import React, { useState, useRef } from 'react'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { ExternalLinkIcon, FolderIcon, GithubIcon, StarIcon } from 'lucide-react'
+import { ExternalLinkIcon, FolderIcon, GithubIcon, ArrowRightIcon } from 'lucide-react'
 import Image from 'next/image'
 import {
   motion,
@@ -22,16 +14,13 @@ import {
   useSpring,
   AnimatePresence,
 } from 'framer-motion'
-import { CreativeGrid, GridItem } from './UI/CreativeGrid'
 import { MagneticButton } from './UI/MagneticButton'
 import { projects } from '../data/projects'
 
 export function PortfolioProjects() {
-  // Reference for scroll-based animations
   const containerRef = useRef<HTMLDivElement>(null)
-
-  // For hover states
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null)
+  const [activeProject, setActiveProject] = useState(null)
+  const [hoveredProject, setHoveredProject] = useState(null)
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -41,290 +30,136 @@ export function PortfolioProjects() {
   // Create a spring-based scroll progress for smoother animation
   const smoothProgress = useSpring(scrollYProgress, { damping: 20, stiffness: 100 })
 
-  // Create a subtle rotation based on scroll position
-  const rotate = useTransform(smoothProgress, [0, 1], [-2, 2])
-
-  // Custom hook to determine screen size
-  const useIsMobile = () => {
-    const [isMobile, setIsMobile] = useState(false)
-
-    React.useEffect(() => {
-      const checkIsMobile = () => {
-        setIsMobile(window.innerWidth < 768)
-      }
-
-      checkIsMobile()
-      window.addEventListener('resize', checkIsMobile)
-
-      return () => {
-        window.removeEventListener('resize', checkIsMobile)
-      }
-    }, [])
-
-    return isMobile
-  }
-
-  const isMobile = useIsMobile()
-
   return (
-    <motion.section id="projects" className="py-12" ref={containerRef}>
+    <section id="projects" className="py-24 md:py-32" ref={containerRef}>
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        viewport={{ once: true }}
-        className="text-center mb-16 max-w-2xl mx-auto px-4 md:px-0"
+        transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
+        viewport={{ once: true, margin: '-100px' }}
+        className="text-left mb-24 max-w-2xl"
       >
-        <motion.div
-          className="inline-flex items-center justify-center p-2 bg-primary/10 rounded-full mb-4"
-          whileHover={{ scale: 1.1 }}
-          transition={{ type: 'spring', stiffness: 400, damping: 10 }}
-        >
-          <FolderIcon className="h-6 w-6 text-primary" />
-        </motion.div>
-        <h2 className="text-3xl font-bold mb-4">Featured Projects</h2>
-        <p className="text-muted-foreground">
-          A selection of my recent work and personal projects.
+        <p className="text-xs uppercase tracking-[0.25em] text-neutral-400 mb-6">Portfolio</p>
+        <h2 className="text-3xl md:text-4xl font-light mb-8 leading-tight">
+          Selected
+          <br />
+          Projects
+        </h2>
+        <p className="text-neutral-300 font-light leading-relaxed">
+          A curated selection of minimal design and development work that balances aesthetics and
+          functionality.
         </p>
       </motion.div>
 
       <Tabs defaultValue="all" className="w-full">
-        <TabsList className="mb-8 md:mb-12 flex justify-center h-10 md:h-12 shadow-sm backdrop-blur bg-background/50 rounded-full max-w-sm mx-auto overflow-x-auto no-scrollbar">
-          <TabsTrigger value="all" className="rounded-full text-sm">
-            All
-          </TabsTrigger>
-          <TabsTrigger value="web" className="rounded-full text-sm">
-            Web
-          </TabsTrigger>
-          <TabsTrigger value="mobile" className="rounded-full text-sm">
-            Mobile
-          </TabsTrigger>
-          <TabsTrigger value="data" className="rounded-full text-sm">
-            Data
-          </TabsTrigger>
-        </TabsList>
+        <div className="mb-16">
+          <TabsList className="justify-start h-12 shadow-none bg-transparent border-b border-neutral-800/20 rounded-none">
+            {['all', 'web', 'branding', 'product'].map((category) => (
+              <TabsTrigger
+                key={category}
+                value={category}
+                className="data-[state=active]:shadow-none data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-neutral-200 rounded-none text-sm uppercase tracking-wider font-light"
+              >
+                {category === 'all' ? 'All Work' : category}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
 
-        <TabsContent value="all" className="px-4 md:px-0">
-          {isMobile ? (
-            <div className="grid grid-cols-1 gap-6">
-              {projects.map((project, index) => (
-                <motion.div
-                  key={project.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <ProjectCard
-                    project={project}
-                    index={index}
-                    onHover={() => setHoveredCard(project.id)}
-                    onHoverEnd={() => setHoveredCard(null)}
-                    isHovered={hoveredCard === project.id}
-                  />
-                </motion.div>
-              ))}
-            </div>
-          ) : (
-            <CreativeGrid>
-              {projects.map((project, index) => {
-                // Create a staggered, creative layout
-                const span = index % 3 === 0 ? 7 : index % 3 === 1 ? 5 : 6
-                const colStart = index % 3 === 0 ? 1 : index % 3 === 1 ? 8 : 3
-
-                return (
-                  <GridItem key={project.id} span={span} colStart={colStart} delay={index * 0.1}>
-                    <ProjectCard
-                      project={project}
-                      index={index}
-                      onHover={() => setHoveredCard(project.id)}
-                      onHoverEnd={() => setHoveredCard(null)}
-                      isHovered={hoveredCard === project.id}
-                    />
-                  </GridItem>
-                )
-              })}
-            </CreativeGrid>
-          )}
+        <TabsContent value="all" className="mt-0">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-x-8 gap-y-24">
+            {projects.slice(0, 6).map((project, index) => (
+              <ProjectItem
+                key={project.id}
+                project={project}
+                index={index}
+                setHovered={setHoveredProject}
+                isHovered={hoveredProject === project.id}
+              />
+            ))}
+          </div>
         </TabsContent>
 
-        {['web', 'mobile', 'data'].map((category) => (
-          <TabsContent key={category} value={category} className="px-4 md:px-0">
-            {isMobile ? (
-              <div className="grid grid-cols-1 gap-6">
-                {projects
-                  .filter((project) => project.category === category)
-                  .map((project, index) => (
-                    <motion.div
-                      key={project.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: index * 0.1 }}
-                      viewport={{ once: true }}
-                    >
-                      <ProjectCard
-                        project={project}
-                        index={index}
-                        onHover={() => setHoveredCard(project.id)}
-                        onHoverEnd={() => setHoveredCard(null)}
-                        isHovered={hoveredCard === project.id}
-                      />
-                    </motion.div>
-                  ))}
-              </div>
-            ) : (
-              <CreativeGrid>
-                {projects
-                  .filter((project) => project.category === category)
-                  .map((project, index) => {
-                    // Create a staggered, creative layout
-                    const span = index % 3 === 0 ? 7 : index % 3 === 1 ? 5 : 6
-                    const colStart = index % 3 === 0 ? 1 : index % 3 === 1 ? 8 : 3
-
-                    return (
-                      <GridItem
-                        key={project.id}
-                        span={span}
-                        colStart={colStart}
-                        delay={index * 0.1}
-                      >
-                        <ProjectCard
-                          project={project}
-                          index={index}
-                          onHover={() => setHoveredCard(project.id)}
-                          onHoverEnd={() => setHoveredCard(null)}
-                          isHovered={hoveredCard === project.id}
-                        />
-                      </GridItem>
-                    )
-                  })}
-              </CreativeGrid>
-            )}
+        {['web', 'branding', 'product'].map((category) => (
+          <TabsContent key={category} value={category} className="mt-0">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-x-8 gap-y-24">
+              {projects
+                .filter((p) => p.category === category)
+                .map((project, index) => (
+                  <ProjectItem
+                    key={project.id}
+                    project={project}
+                    index={index}
+                    setHovered={setHoveredProject}
+                    isHovered={hoveredProject === project.id}
+                  />
+                ))}
+            </div>
           </TabsContent>
         ))}
       </Tabs>
-    </motion.section>
+    </section>
   )
 }
 
-function ProjectCard({ project, index, onHover, onHoverEnd, isHovered }) {
-  const cardRef = useRef(null)
-  const isInView = useInView(cardRef, { once: true, amount: 0.3 })
-
-  // Card hover effects
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-  const handleMouseMove = (e) => {
-    if (!cardRef.current) return
-    const rect = cardRef.current.getBoundingClientRect()
-    const x = (e.clientX - rect.left) / rect.width - 0.5
-    const y = (e.clientY - rect.top) / rect.height - 0.5
-    setMousePosition({ x, y })
-  }
+function ProjectItem({ project, index, setHovered, isHovered }) {
+  // Alternate between left and right alignment for projects
+  const isEven = index % 2 === 0
+  const colSpan = isEven ? 'md:col-span-7' : 'md:col-span-7 md:col-start-6'
+  const textAlign = isEven ? 'md:text-left' : 'md:text-right'
 
   return (
     <motion.div
-      ref={cardRef}
-      initial={{ opacity: 0, y: 20 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      whileHover={{
-        scale: 1.02,
-        rotateX: mousePosition.y * -5,
-        rotateY: mousePosition.x * 5,
-      }}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={onHover}
-      onMouseLeave={onHoverEnd}
-      style={{
-        transformStyle: 'preserve-3d',
-        perspective: '1000px',
-      }}
+      className={`col-span-12 ${colSpan}`}
+      initial={{ opacity: 0, y: 60 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1], delay: index * 0.1 }}
+      viewport={{ once: true, margin: '-100px' }}
+      onMouseEnter={() => setHovered(project.id)}
+      onMouseLeave={() => setHovered(null)}
     >
-      <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-all border-none bg-background/60 backdrop-blur h-full flex flex-col group">
-        <div className="relative h-48 w-full overflow-hidden">
-          <motion.div
-            animate={isHovered ? { scale: 1.05 } : { scale: 1 }}
-            transition={{ duration: 0.4 }}
-            className="h-full w-full"
-          >
+      <div className="grid grid-cols-1 gap-6">
+        <motion.div
+          className="aspect-[16/9] overflow-hidden bg-neutral-100/5"
+          whileHover={{ scale: 0.97 }}
+          transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
+        >
+          <div className="relative w-full h-full">
             <Image
-              src={project.image || '/placeholder-image.jpg'}
+              src={project.image || '/placeholder-project.jpg'}
               alt={project.title}
               fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className={`object-cover transition-all duration-700 ${isHovered ? 'grayscale-0 scale-105' : 'grayscale'}`}
             />
-          </motion.div>
-
-          {project.featured && (
-            <motion.div
-              className="absolute top-3 right-3 bg-primary text-primary-foreground text-xs px-2 py-1 rounded flex items-center gap-1"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              <StarIcon className="h-3 w-3" />
-              <span>Featured</span>
-            </motion.div>
-          )}
-
-          {/* Add a slight overlay when hovered */}
-          <motion.div
-            className="absolute inset-0 bg-black pointer-events-none"
-            animate={{ opacity: isHovered ? 0.1 : 0 }}
-            transition={{ duration: 0.3 }}
-          />
-        </div>
-
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg relative">
-            {project.title}
-            <motion.div
-              className="absolute -bottom-1 left-0 h-0.5 bg-primary"
-              initial={{ width: 0 }}
-              animate={isHovered ? { width: '100%' } : { width: 0 }}
-              transition={{ duration: 0.3 }}
-            />
-          </CardTitle>
-          <CardDescription className="line-clamp-2 h-10">{project.description}</CardDescription>
-        </CardHeader>
-
-        <CardContent className="flex-grow pb-2">
-          <div className="flex flex-wrap gap-1.5 mb-4">
-            {project.tags.map((tag) => (
-              <Badge key={tag} variant="secondary" className="px-2 py-0.5 text-xs bg-muted/50">
-                {tag}
-              </Badge>
-            ))}
           </div>
-        </CardContent>
+        </motion.div>
 
-        <CardFooter className="flex gap-3 pt-2">
-          <MagneticButton
-            size="sm"
-            variant="outline"
-            asChild
-            className="flex-1 rounded-full shadow-sm hover:shadow-md transition-shadow bg-background/50"
-            strength={30}
+        <div className={`${textAlign}`}>
+          <p className="text-xs uppercase tracking-[0.15em] text-neutral-400 mb-2">
+            {project.category}
+          </p>
+          <h3 className="text-xl md:text-2xl font-light mb-4">{project.title}</h3>
+          <p className="max-w-md text-neutral-300 font-light mb-6 text-sm leading-relaxed">
+            {project.description}
+          </p>
+
+          <motion.div
+            className={`flex gap-6 ${!isEven ? 'md:justify-end' : ''}`}
+            initial={{ opacity: 0.8 }}
+            whileHover={{ opacity: 1 }}
           >
-            <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
-              <GithubIcon className="mr-2 h-4 w-4" />
-              Code
-            </a>
-          </MagneticButton>
-          <MagneticButton
-            size="sm"
-            asChild
-            className="flex-1 rounded-full shadow-sm hover:shadow-md transition-shadow"
-            strength={30}
-          >
-            <a href={project.demoUrl} target="_blank" rel="noopener noreferrer">
-              <ExternalLinkIcon className="mr-2 h-4 w-4" />
-              Demo
-            </a>
-          </MagneticButton>
-        </CardFooter>
-      </Card>
+            <Button
+              variant="link"
+              className="text-neutral-300 hover:text-white p-0 flex items-center gap-2 font-light"
+              asChild
+            >
+              <a href={project.demoUrl} target="_blank" rel="noopener noreferrer">
+                View Project <ArrowRightIcon className="h-4 w-4" />
+              </a>
+            </Button>
+          </motion.div>
+        </div>
+      </div>
     </motion.div>
   )
 }

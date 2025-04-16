@@ -6,20 +6,25 @@ import {
   PortfolioTestimonials,
   PortfolioContact,
   BackgroundScene,
+  SmoothScroll,
+  CustomCursor,
+  ProgressIndicator,
 } from './components'
 
 export default function Portfolio() {
   return (
-    <>
+    <SmoothScroll>
+      <CustomCursor />
+      <ProgressIndicator />
       <BackgroundScene />
-      <div className="container px-4 md:px-6">
+      <div className="max-w-screen-2xl mx-auto px-6 md:px-10 lg:px-16">
         <PortfolioHero />
+        <PortfolioAbout />
         <PortfolioSkills />
         <PortfolioProjects />
-        <PortfolioAbout />
         <PortfolioTestimonials />
         <PortfolioContact />
       </div>
-    </>
+    </SmoothScroll>
   )
 }
