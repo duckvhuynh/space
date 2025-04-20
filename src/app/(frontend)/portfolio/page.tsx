@@ -1,30 +1,32 @@
-import type { Metadata } from 'next'
 import React from 'react'
+import {
+  PortfolioHero,
+  PortfolioAbout,
+  PortfolioSkills,
+  PortfolioProjects,
+  PortfolioContact,
+  PortfolioTestimonials,
+} from './components'
+import { PortfolioBackground } from './components/PortfolioBackground'
+import { Metadata } from 'next'
 
-import { PortfolioHero } from './components/PortfolioHero'
-import { PortfolioProjects } from './components/PortfolioProjects'
-import { PortfolioContact } from './components/PortfolioContact'
-import { generateMeta } from '@/utilities/generateMeta'
-import { PortfolioSkills } from './components'
-
-export async function generateStaticParams() {
-  return [{}] // No dynamic params for the portfolio page
-}
-
-export async function generateMetadata(): Promise<Metadata> {
-  return generateMeta({
-    title: 'Portfolio - Your Name',
-    description: 'Welcome to my portfolio. Explore my projects and get in touch!',
-  })
+export const metadata: Metadata = {
+  title: 'Portfolio | Duck V. Huynh',
+  description: 'Full Stack Developer showcasing projects and skills',
 }
 
 export default function PortfolioPage() {
   return (
-    <main className="portfolio-page">
-      <PortfolioHero />
-      <PortfolioSkills />
-      <PortfolioProjects />
-      <PortfolioContact />
+    <main className="relative">
+      <PortfolioBackground />
+      <div className="relative z-10">
+        <PortfolioHero />
+        <PortfolioAbout />
+        <PortfolioSkills />
+        <PortfolioProjects />
+        <PortfolioTestimonials />
+        <PortfolioContact />
+      </div>
     </main>
   )
 }

@@ -14,7 +14,8 @@ export const PortfolioAbout: React.FC = () => {
           </Badge>
           <h2 className="text-3xl md:text-4xl font-bold mb-4">My Background</h2>
           <p className="text-muted-foreground max-w-2xl">
-            Learn more about my journey, experience, and what drives me.
+            With over 8 years in tech, I've evolved from a curious programmer to a passionate
+            full-stack developer focused on creating impactful digital solutions.
           </p>
         </div>
 
@@ -23,7 +24,7 @@ export const PortfolioAbout: React.FC = () => {
             {/* Replace with your image */}
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-background/0"></div>
             <div className="h-full w-full bg-muted flex items-center justify-center">
-              <span className="text-2xl text-muted-foreground">Your Photo</span>
+              <span className="text-2xl text-muted-foreground">Professional Profile Photo</span>
             </div>
           </div>
 
@@ -33,20 +34,28 @@ export const PortfolioAbout: React.FC = () => {
               <div className="flex items-start gap-3">
                 <Code className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
                 <p>
-                  I am a passionate full-stack developer with X years of experience building web
-                  applications. My journey in tech began when I [your story here].
+                  I'm a full-stack developer with 8+ years of experience creating scalable web
+                  applications and digital products. My journey began with a passion for
+                  problem-solving, which led me to explore software engineering as a way to build
+                  solutions that impact people's lives.
                 </p>
               </div>
               <div className="flex items-start gap-3">
                 <Coffee className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
                 <p>
-                  I specialize in building responsive, accessible, and performant web applications
-                  using modern technologies like React, Next.js, and Node.js.
+                  I've mastered TypeScript, React, Node.js, and modern cloud architectures. I'm
+                  particularly passionate about creating accessible, performant applications with
+                  clean, maintainable code. I believe great software should be both technically
+                  excellent and delightful to use.
                 </p>
               </div>
               <div className="flex items-start gap-3">
                 <Book className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
-                <p>When I am not coding, you can find me [your interests/hobbies].</p>
+                <p>
+                  When I'm not coding, you'll find me exploring the latest tech trends, contributing
+                  to open-source, hiking in nature, or experimenting with photography. I'm also an
+                  avid reader of sci-fi and technical books, always looking to expand my horizons.
+                </p>
               </div>
             </div>
 
@@ -58,12 +67,12 @@ export const PortfolioAbout: React.FC = () => {
                 </h4>
                 <ul className="space-y-2">
                   <li className="text-sm text-muted-foreground">
-                    <strong className="block text-foreground">Computer Science Degree</strong>
-                    University Name, 2015-2019
+                    <strong className="block text-foreground">MSc in Computer Science</strong>
+                    Stanford University, 2014-2016
                   </li>
                   <li className="text-sm text-muted-foreground">
-                    <strong className="block text-foreground">Web Development Bootcamp</strong>
-                    Program Name, 2020
+                    <strong className="block text-foreground">BSc in Software Engineering</strong>
+                    University of California, 2010-2014
                   </li>
                 </ul>
               </div>
@@ -75,12 +84,12 @@ export const PortfolioAbout: React.FC = () => {
                 </h4>
                 <ul className="space-y-2">
                   <li className="text-sm text-muted-foreground">
-                    <strong className="block text-foreground">Senior Developer</strong>
-                    Company Name, 2021-Present
+                    <strong className="block text-foreground">Senior Full Stack Engineer</strong>
+                    TechVision Global, 2020-Present
                   </li>
                   <li className="text-sm text-muted-foreground">
                     <strong className="block text-foreground">Frontend Developer</strong>
-                    Company Name, 2019-2021
+                    InnovateSoft Solutions, 2016-2020
                   </li>
                 </ul>
               </div>
@@ -88,7 +97,7 @@ export const PortfolioAbout: React.FC = () => {
 
             <div className="mt-8">
               <Button asChild>
-                <a href="/path-to-resume.pdf" target="_blank" rel="noopener noreferrer">
+                <a href="/duck-huynh-resume.pdf" target="_blank" rel="noopener noreferrer">
                   Download Resume <ArrowRight className="ml-2 h-4 w-4" />
                 </a>
               </Button>

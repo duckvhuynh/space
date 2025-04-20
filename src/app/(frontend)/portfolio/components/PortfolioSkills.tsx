@@ -5,22 +5,37 @@ import { Progress } from '@/components/ui/progress'
 
 export const PortfolioSkills: React.FC = () => {
   const frontendSkills = [
-    { name: 'React', level: 90 },
-    { name: 'TypeScript', level: 85 },
-    { name: 'Next.js', level: 80 },
-    { name: 'CSS/SCSS', level: 85 },
-    { name: 'Tailwind CSS', level: 90 },
+    { name: 'React/Next.js', level: 95 },
+    { name: 'TypeScript', level: 90 },
+    { name: 'TailwindCSS', level: 95 },
+    { name: 'Redux/Zustand', level: 85 },
+    { name: 'React Query', level: 88 },
   ]
 
   const backendSkills = [
-    { name: 'Node.js', level: 80 },
-    { name: 'Express', level: 75 },
-    { name: 'MongoDB', level: 70 },
-    { name: 'PostgreSQL', level: 65 },
-    { name: 'GraphQL', level: 60 },
+    { name: 'Node.js/Express', level: 92 },
+    { name: 'MongoDB/Mongoose', level: 85 },
+    { name: 'PostgreSQL', level: 80 },
+    { name: 'GraphQL', level: 75 },
+    { name: 'Payload CMS', level: 88 },
   ]
 
-  const otherSkills = ['Git', 'Docker', 'CI/CD', 'Jest', 'Figma', 'AWS', 'Firebase']
+  const otherSkills = [
+    'AWS',
+    'Docker',
+    'CI/CD',
+    'Jest/Vitest',
+    'Storybook',
+    'Figma',
+    'Git',
+    'Agile',
+    'RESTful APIs',
+    'Performance Optimization',
+    'Accessibility',
+    'SEO',
+    'Vercel',
+    'Netlify',
+  ]
 
   return (
     <section id="skills" className="py-20">
@@ -29,9 +44,10 @@ export const PortfolioSkills: React.FC = () => {
           <Badge variant="outline" className="mb-4">
             Skills
           </Badge>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">My Technical Skills</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Technical Expertise</h2>
           <p className="text-muted-foreground max-w-2xl">
-            I am proficient in various technologies and continuously learning new ones.
+            My professional toolkit has been refined through years of hands-on experience across
+            various projects and domains.
           </p>
         </div>
 
@@ -73,10 +89,10 @@ export const PortfolioSkills: React.FC = () => {
 
         <Card className="mt-12">
           <CardContent className="p-6">
-            <h3 className="text-2xl font-semibold mb-6">Other Skills</h3>
-            <div className="flex flex-wrap gap-2">
+            <h3 className="text-2xl font-semibold mb-6">Additional Expertise</h3>
+            <div className="flex flex-wrap gap-3">
               {otherSkills.map((skill, index) => (
-                <Badge key={index} variant="secondary" className="text-sm py-1 px-3">
+                <Badge key={index} variant="secondary" className="text-sm py-1.5 px-3">
                   {skill}
                 </Badge>
               ))}
