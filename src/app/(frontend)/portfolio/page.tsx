@@ -5,7 +5,7 @@ import { PortfolioHero } from './components/PortfolioHero'
 import { PortfolioProjects } from './components/PortfolioProjects'
 import { PortfolioContact } from './components/PortfolioContact'
 import { generateMeta } from '@/utilities/generateMeta'
-import { PortfolioSkills } from './components'
+import { PortfolioSkills, PortfolioTestimonials } from './components'
 
 export async function generateStaticParams() {
   return [{}] // No dynamic params for the portfolio page
@@ -24,6 +24,7 @@ export default function PortfolioPage() {
       <PortfolioHero />
       <PortfolioSkills />
       <PortfolioProjects />
+      <PortfolioTestimonials />
       <PortfolioContact />
     </main>
   )

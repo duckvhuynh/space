@@ -15,7 +15,7 @@ import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { PortfolioHero } from '@/app/(frontend)/portfolio/components/PortfolioHero'
 import { PortfolioProjects } from '@/app/(frontend)/portfolio/components/PortfolioProjects'
 import { PortfolioContact } from '@/app/(frontend)/portfolio/components/PortfolioContact'
-import { PortfolioSkills } from '../portfolio/components'
+import { PortfolioSkills, PortfolioTestimonials } from '../portfolio/components'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -55,9 +55,12 @@ export default async function Page({ params: paramsPromise }: Args) {
   if (slug === 'portfolio') {
     return (
       <main className="portfolio-page">
+        <PageClient />
+        {draft && <LivePreviewListener />}
         <PortfolioHero />
         <PortfolioSkills />
         <PortfolioProjects />
+        <PortfolioTestimonials />
         <PortfolioContact />
       </main>
     )
