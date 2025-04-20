@@ -1,10 +1,19 @@
 'use client'
 
-import React, { useEffect, useRef, ReactNode } from 'react'
+import React, { useLayoutEffect, useRef, ReactNode, useState } from 'react'
 import { useScroll, useTransform, useSpring, motion } from 'framer-motion'
 
 interface SmoothScrollProps {
   children: ReactNode
+}
+
+// Simple debounce function to limit resize calculations
+const debounce = (fn: Function, ms = 300) => {
+  let timeoutId: ReturnType<typeof setTimeout>
+  return function (...args: any[]) {
+    clearTimeout(timeoutId)
+    timeoutId = setTimeout(() => fn.apply(this, args), ms)
+  }
 }
 
 export const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
@@ -12,9 +21,9 @@ export const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
   const wrapperRef = useRef<HTMLDivElement>(null)
 
   // Content height state
-  const [contentHeight, setContentHeight] = React.useState(0)
+  const [contentHeight, setContentHeight] = useState(0)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const updateContentHeight = () => {
       if (contentRef.current) {
         const height = contentRef.current.getBoundingClientRect().height
@@ -25,32 +34,52 @@ export const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
       }
     }
 
-    // Update on mount and window resize
+    // Initial update
     updateContentHeight()
-    window.addEventListener('resize', updateContentHeight)
+
+    // Debounced resize handler for better performance
+    const debouncedUpdateHeight = debounce(updateContentHeight, 200)
+    window.addEventListener('resize', debouncedUpdateHeight)
 
     // Cleanup
     return () => {
-      window.removeEventListener('resize', updateContentHeight)
+      window.removeEventListener('resize', debouncedUpdateHeight)
       document.body.style.height = ''
     }
   }, [])
 
-  // Scroll progress
-  const { scrollY } = useScroll()
+  // Scroll progress with improved configuration
+  const { scrollY } = useScroll({
+    // More efficient update strategy
+    layoutEffect: true,
+  })
 
-  // Apply smooth scrolling with spring physics
+  // Apply smooth scrolling with optimized spring physics
   const transform = useTransform(scrollY, [0, contentHeight], [0, -contentHeight])
 
   const smoothTransform = useSpring(transform, {
-    damping: 15,
-    mass: 0.1,
-    stiffness: 100,
+    // Optimized spring configuration for smoother performance
+    damping: 25,
+    mass: 0.5,
+    stiffness: 120,
+    // Reduce unnecessary precision for better performance
+    restDelta: 0.01,
+    // Limit update frequency
+    restSpeed: 0.01,
   })
 
   return (
     <div ref={wrapperRef} className="fixed inset-0 overflow-hidden">
-      <motion.div ref={contentRef} style={{ y: smoothTransform }} className="will-change-transform">
+      <motion.div
+        ref={contentRef}
+        style={{
+          y: smoothTransform,
+          // Add GPU acceleration
+          willChange: 'transform',
+          transform: 'translateZ(0)',
+        }}
+        className="will-change-transform"
+      >
         {children}
       </motion.div>
     </div>

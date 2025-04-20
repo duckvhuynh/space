@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useRef, ReactNode } from 'react'
+import React, { useState, useRef, ReactNode, ElementType } from 'react'
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 
 interface MagneticButtonProps {
@@ -9,7 +9,8 @@ interface MagneticButtonProps {
   strength?: number
   onClick?: () => void
   href?: string
-  as?: 'button' | 'a' | 'div'
+  as?: ElementType
+  magneticAttribute?: boolean
 }
 
 export const MagneticButton: React.FC<MagneticButtonProps> = ({
@@ -18,7 +19,8 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
   strength = 40,
   onClick,
   href,
-  as = 'button',
+  as: Component = 'button',
+  magneticAttribute = true,
 }) => {
   const buttonRef = useRef<HTMLDivElement>(null)
   const [isHovered, setIsHovered] = useState(false)
@@ -60,52 +62,42 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
     setIsHovered(false)
   }
 
-  // Render different elements based on the 'as' prop
-  const renderElement = () => {
-    const sharedProps = {
-      ref: buttonRef,
-      className: `relative inline-block ${className}`,
-      onMouseMove: handleMouseMove,
-      onMouseEnter: () => setIsHovered(true),
-      onMouseLeave: resetPosition,
-      onClick,
-      style: {
-        x: buttonTranslateX,
-        y: buttonTranslateY,
-      },
-    }
-
-    const content = (
-      <motion.div
-        style={{
-          x: contentTranslateX,
-          y: contentTranslateY,
-          scale: isHovered ? 1.05 : 1,
-        }}
-        transition={{ duration: 0.3 }}
-      >
-        {children}
-      </motion.div>
-    )
-
-    if (as === 'a' && href) {
-      return (
-        <motion.a href={href} {...sharedProps}>
-          {content}
-        </motion.a>
-      )
-    } else if (as === 'button') {
-      return (
-        <motion.button type="button" {...sharedProps}>
-          {content}
-        </motion.button>
-      )
-    } else {
-      return <motion.div {...sharedProps}>{content}</motion.div>
-    }
+  const commonProps = {
+    ref: buttonRef,
+    className: `relative inline-block ${className}`,
+    onMouseMove: handleMouseMove,
+    onMouseEnter: () => setIsHovered(true),
+    onMouseLeave: resetPosition,
+    onClick,
+    style: {
+      x: buttonTranslateX,
+      y: buttonTranslateY,
+    },
+    ...(magneticAttribute ? { 'data-magnetic': 'true' } : {}),
   }
 
-  return renderElement()
+  const content = (
+    <motion.div
+      style={{
+        x: contentTranslateX,
+        y: contentTranslateY,
+        scale: isHovered ? 1.05 : 1,
+      }}
+      transition={{ duration: 0.3 }}
+    >
+      {children}
+    </motion.div>
+  )
+
+  if (href) {
+    return (
+      <motion.a href={href} {...commonProps}>
+        {content}
+      </motion.a>
+    )
+  }
+
+  return <Component {...commonProps}>{content}</Component>
 }
 
 export default MagneticButton

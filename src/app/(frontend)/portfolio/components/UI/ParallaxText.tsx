@@ -6,17 +6,16 @@ import {
   useScroll,
   useSpring,
   useTransform,
-  useMotionValue,
-  useVelocity,
   useAnimationFrame,
+  useMotionValue,
 } from 'framer-motion'
-import { wrap } from '@motionone/utils'
 
 interface ParallaxTextProps {
   children: ReactNode
   baseVelocity?: number
   direction?: 'left' | 'right'
   className?: string
+  repeat?: number
 }
 
 export const ParallaxText: React.FC<ParallaxTextProps> = ({
@@ -24,43 +23,55 @@ export const ParallaxText: React.FC<ParallaxTextProps> = ({
   baseVelocity = 3,
   direction = 'left',
   className = '',
+  repeat = 4,
 }) => {
   const baseX = useMotionValue(0)
   const { scrollY } = useScroll()
-  const scrollVelocity = useVelocity(scrollY)
+  const scrollVelocity = useMotionValue(0)
   const smoothVelocity = useSpring(scrollVelocity, {
     damping: 50,
     stiffness: 400,
   })
-  const velocityFactor = useTransform(smoothVelocity, [0, 1000], [0, 5], {
-    clamp: false,
-  })
-
-  const containerRef = useRef<HTMLDivElement>(null)
-
-  const x = useTransform(baseX, (v) => `${wrap(0, -100, v)}%`)
 
   const directionFactor = direction === 'right' ? -1 : 1
+  const containerRef = useRef<HTMLDivElement>(null)
 
   useAnimationFrame((t, delta) => {
     let moveBy = directionFactor * baseVelocity * (delta / 1000)
 
-    // Add some movement based on scroll velocity
-    moveBy += directionFactor * moveBy * velocityFactor.get()
+    // Add scroll velocity influence to create a parallax effect
+    const scrollVelocityFactor = smoothVelocity.get() * 0.2
+    moveBy += directionFactor * scrollVelocityFactor
 
-    baseX.set(baseX.get() + moveBy)
+    baseX.set((baseX.get() + moveBy) % 100)
   })
 
+  // Update scroll velocity
+  useAnimationFrame(() => {
+    const currentScrollY = scrollY.get()
+    const previousScrollY = scrollY.getPrevious() || currentScrollY
+    const scrollDelta = currentScrollY - previousScrollY
+
+    // Calculate velocity based on scroll delta
+    scrollVelocity.set(scrollDelta / 10)
+  })
+
+  // Create an array of repeated children
+  const repeatedChildren = Array(repeat).fill(children)
+
   return (
-    <div
-      className={`relative flex overflow-hidden whitespace-nowrap ${className}`}
-      ref={containerRef}
-    >
-      <motion.div className="flex whitespace-nowrap" style={{ x }}>
-        <span className="block mr-4">{children}</span>
-        <span className="block mr-4">{children}</span>
-        <span className="block mr-4">{children}</span>
-        <span className="block mr-4">{children}</span>
+    <div ref={containerRef} className={`overflow-hidden whitespace-nowrap ${className}`}>
+      <motion.div
+        className="inline-flex whitespace-nowrap"
+        style={{
+          x: useTransform(baseX, (value) => `${-value}%`),
+        }}
+      >
+        {repeatedChildren.map((child, i) => (
+          <span key={i} className="mr-6 inline-block">
+            {child}
+          </span>
+        ))}
       </motion.div>
     </div>
   )

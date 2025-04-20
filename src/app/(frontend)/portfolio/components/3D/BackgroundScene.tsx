@@ -5,20 +5,27 @@ import { motion, useScroll, useTransform } from 'framer-motion'
 
 interface BackgroundSceneProps {
   className?: string
+  dotColor?: string
+  lineColor?: string
+  density?: number
 }
 
-export const BackgroundScene: React.FC<BackgroundSceneProps> = ({ className }) => {
+export const BackgroundScene: React.FC<BackgroundSceneProps> = ({
+  className = '',
+  dotColor = 'currentColor',
+  lineColor = 'currentColor',
+  density = 20,
+}) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
-  // For parallax effect on scroll
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start start', 'end start'],
   })
 
   const y = useTransform(scrollYProgress, [0, 1], ['0%', '25%'])
-  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.5, 0])
+  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.7, 0.4])
 
   useEffect(() => {
     if (!canvasRef.current) return
@@ -27,112 +34,97 @@ export const BackgroundScene: React.FC<BackgroundSceneProps> = ({ className }) =
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    // Set canvas dimensions
-    const resizeCanvas = () => {
+    // Set canvas dimensions with DPI adjustment
+    const setCanvasSize = () => {
       const { width, height } = canvas.getBoundingClientRect()
       const dpr = window.devicePixelRatio || 1
       canvas.width = width * dpr
       canvas.height = height * dpr
       ctx.scale(dpr, dpr)
+      ctx.globalAlpha = 0.7
     }
 
-    resizeCanvas()
-    window.addEventListener('resize', resizeCanvas)
+    setCanvasSize()
+    window.addEventListener('resize', setCanvasSize)
 
-    // Particle system
+    // Create particles
+    const particleCount = Math.min(window.innerWidth / density, 100)
     const particles: Array<{
       x: number
       y: number
-      radius: number
-      color: string
-      velocity: { x: number; y: number }
+      size: number
+      speed: { x: number; y: number }
     }> = []
 
-    const createParticles = () => {
-      const totalParticles = Math.min(window.innerWidth / 15, 100)
-
-      for (let i = 0; i < totalParticles; i++) {
-        const radius = Math.random() * 1.5 + 0.5
-        const x = Math.random() * canvas.width
-        const y = Math.random() * canvas.height
-        const color = `rgba(255, 255, 255, ${Math.random() * 0.15 + 0.05})`
-
-        const angle = Math.random() * Math.PI * 2
-        const velocity = {
-          x: Math.cos(angle) * 0.2,
-          y: Math.sin(angle) * 0.2,
-        }
-
-        particles.push({ x, y, radius, color, velocity })
-      }
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 2 + 0.5,
+        speed: {
+          x: (Math.random() - 0.5) * 0.7,
+          y: (Math.random() - 0.5) * 0.7,
+        },
+      })
     }
 
-    createParticles()
-
-    // Animation
-    let animationId: number
-
+    // Animation function
     const animate = () => {
-      animationId = requestAnimationFrame(animate)
+      requestAnimationFrame(animate)
+
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
       // Update and draw particles
       particles.forEach((particle) => {
         // Update position
-        particle.x += particle.velocity.x
-        particle.y += particle.velocity.y
+        particle.x += particle.speed.x
+        particle.y += particle.speed.y
 
-        // Boundary checking
-        if (particle.x < 0 || particle.x > canvas.width) {
-          particle.velocity.x = -particle.velocity.x
-        }
-
-        if (particle.y < 0 || particle.y > canvas.height) {
-          particle.velocity.y = -particle.velocity.y
-        }
+        // Wrap around edges
+        if (particle.x < 0) particle.x = canvas.width
+        if (particle.x > canvas.width) particle.x = 0
+        if (particle.y < 0) particle.y = canvas.height
+        if (particle.y > canvas.height) particle.y = 0
 
         // Draw particle
         ctx.beginPath()
-        ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2)
-        ctx.fillStyle = particle.color
+        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2)
+        ctx.fillStyle = dotColor
         ctx.fill()
       })
 
-      // Draw connections
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)'
-      ctx.lineWidth = 0.5
-
-      for (let i = 0; i < particles.length; i++) {
+      // Draw connections between nearby particles
+      particles.forEach((particle, i) => {
         for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x
-          const dy = particles[i].y - particles[j].y
+          const dx = particle.x - particles[j].x
+          const dy = particle.y - particles[j].y
           const distance = Math.sqrt(dx * dx + dy * dy)
 
-          if (distance < 100) {
-            const opacity = 1 - distance / 100
-            ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.05})`
+          if (distance < 120) {
             ctx.beginPath()
-            ctx.moveTo(particles[i].x, particles[i].y)
+            ctx.moveTo(particle.x, particle.y)
             ctx.lineTo(particles[j].x, particles[j].y)
+            ctx.strokeStyle = lineColor
+            ctx.globalAlpha = 0.2 * (1 - distance / 120)
+            ctx.lineWidth = 0.5
             ctx.stroke()
           }
         }
-      }
+      })
     }
 
     animate()
 
     return () => {
-      window.removeEventListener('resize', resizeCanvas)
-      cancelAnimationFrame(animationId)
+      window.removeEventListener('resize', setCanvasSize)
     }
-  }, [])
+  }, [dotColor, lineColor, density])
 
   return (
     <motion.div
       ref={containerRef}
-      style={{ y, opacity }}
-      className={`fixed inset-0 -z-10 ${className || ''}`}
+      style={{ opacity, y }}
+      className={`fixed inset-0 -z-10 ${className}`}
     >
       <canvas ref={canvasRef} className="w-full h-full" />
     </motion.div>

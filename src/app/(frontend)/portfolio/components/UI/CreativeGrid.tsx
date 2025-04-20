@@ -1,88 +1,62 @@
 'use client'
 
 import React, { useRef, ReactNode } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform, useInView } from 'framer-motion'
 
 interface GridItem {
   id: string | number
   content: ReactNode
   colSpan?: number
   rowSpan?: number
-  bgColor?: string
+  className?: string
+  delay?: number
 }
 
 interface CreativeGridProps {
   items: GridItem[]
   className?: string
-  columns?: number
   gap?: number
 }
 
-export const CreativeGrid: React.FC<CreativeGridProps> = ({
-  items,
-  className = '',
-  columns = 12,
-  gap = 4,
-}) => {
+export const CreativeGrid: React.FC<CreativeGridProps> = ({ items, className = '', gap = 4 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
+  const isInView = useInView(containerRef, { once: true, amount: 0.1 })
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start end', 'end start'],
   })
 
-  // Create staggered animations for items
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: i * 0.1,
-        duration: 0.8,
-        ease: [0.16, 1, 0.3, 1],
-      },
-    }),
-  }
-
   return (
     <div
       ref={containerRef}
-      className={`grid grid-cols-${columns} gap-${gap} ${className}`}
-      style={{
-        gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
-        gap: `${gap * 0.25}rem`,
-      }}
+      className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ${className}`}
+      style={{ gap: `${gap * 0.25}rem` }}
     >
       {items.map((item, index) => {
-        // Apply some interesting transforms based on scroll
-        const y = useTransform(scrollYProgress, [0, 1], [0, index % 2 === 0 ? -20 : 20])
+        // Create varied animations based on item index
+        const y = useTransform(scrollYProgress, [0, 1], [50 * (index % 3), -30 * (index % 3)])
 
-        const rotate = useTransform(
-          scrollYProgress,
-          [0, 1],
-          [0, index % 3 === 0 ? 3 : index % 3 === 1 ? -3 : 0],
-        )
+        const opacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0.6, 1, 1, 0.6])
 
-        const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.05, 1])
+        const scale = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0.95, 1, 1, 0.95])
 
         return (
           <motion.div
             key={item.id}
-            className="relative overflow-hidden"
-            style={{
-              gridColumn: `span ${item.colSpan || 1} / span ${item.colSpan || 1}`,
-              gridRow: `span ${item.rowSpan || 1} / span ${item.rowSpan || 1}`,
-              backgroundColor: item.bgColor || 'transparent',
-              y,
-              rotate,
-              scale,
+            style={{ opacity, scale, y }}
+            initial={{ opacity: 0, y: 50 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{
+              duration: 0.8,
+              delay: item.delay || index * 0.1,
+              ease: [0.16, 1, 0.3, 1],
             }}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            custom={index}
-            variants={itemVariants}
+            className={`
+              ${item.colSpan ? `md:col-span-${item.colSpan}` : ''}
+              ${item.rowSpan ? `md:row-span-${item.rowSpan}` : ''}
+              ${item.className || ''}
+            `}
           >
             {item.content}
           </motion.div>

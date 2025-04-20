@@ -15,7 +15,12 @@ import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { PortfolioHero } from '@/app/(frontend)/portfolio/components/PortfolioHero'
 import { PortfolioProjects } from '@/app/(frontend)/portfolio/components/PortfolioProjects'
 import { PortfolioContact } from '@/app/(frontend)/portfolio/components/PortfolioContact'
-import { PortfolioSkills, PortfolioTestimonials } from '../portfolio/components'
+import {
+  CustomCursor,
+  PortfolioSkills,
+  PortfolioTestimonials,
+  SmoothScroll,
+} from '../portfolio/components'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -54,15 +59,19 @@ export default async function Page({ params: paramsPromise }: Args) {
 
   if (slug === 'portfolio') {
     return (
-      <main className="portfolio-page">
-        <PageClient />
-        {draft && <LivePreviewListener />}
-        <PortfolioHero />
-        <PortfolioSkills />
-        <PortfolioProjects />
-        <PortfolioTestimonials />
-        <PortfolioContact />
-      </main>
+      <>
+        <SmoothScroll>
+          <main className="portfolio-page">
+            <PageClient />
+            {draft && <LivePreviewListener />}
+            <PortfolioHero />
+            <PortfolioSkills />
+            <PortfolioProjects />
+            <PortfolioContact />
+          </main>
+        </SmoothScroll>
+        <CustomCursor lightModeColor="#000000" darkModeColor="#ffffff" blend={false} />
+      </>
     )
   }
 
