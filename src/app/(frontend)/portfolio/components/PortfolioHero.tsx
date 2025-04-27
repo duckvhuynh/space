@@ -1,14 +1,45 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ArrowDown, Code, Monitor, Laptop, ChevronRight } from 'lucide-react'
-// Fix motion import to use specific imports instead of the default import
 import { motion as m } from 'framer-motion'
 import { TypeAnimation } from 'react-type-animation'
 
+// Define bubble positions outside of component to avoid hydration mismatch
+const decorativeBubbles = [
+  {
+    position: { top: '15%', left: '20%' },
+    size: { width: '120px', height: '120px' },
+  },
+  {
+    position: { top: '70%', left: '80%' },
+    size: { width: '150px', height: '150px' },
+  },
+  {
+    position: { top: '40%', left: '60%' },
+    size: { width: '100px', height: '100px' },
+  },
+  {
+    position: { top: '80%', left: '30%' },
+    size: { width: '130px', height: '130px' },
+  },
+  {
+    position: { top: '25%', left: '75%' },
+    size: { width: '110px', height: '110px' },
+  },
+]
+
 export const PortfolioHero: React.FC = () => {
+  // State to track if we're on client-side for animations
+  const [isMounted, setIsMounted] = useState(false)
+
+  // Only run animations after component is mounted on client
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
   return (
     <section className="relative w-full min-h-screen flex items-center py-20 md:py-32 overflow-hidden">
       <div className="absolute inset-0 overflow-hidden z-0">
@@ -154,19 +185,23 @@ export const PortfolioHero: React.FC = () => {
           <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 via-primary/5 to-background/0"></div>
           <div className="h-full w-full bg-muted/20 flex items-center justify-center relative overflow-hidden">
             <span className="text-2xl text-muted-foreground">Professional Portrait</span>
-            {/* Add subtle animated elements */}
+
+            {/* Decorative bubbles with consistent positions */}
             <div className="absolute w-full h-full">
-              {Array.from({ length: 5 }).map((_, i) => (
+              {decorativeBubbles.map((bubble, i) => (
                 <div
                   key={i}
                   className="absolute rounded-full bg-primary/10"
                   style={{
-                    top: `${Math.random() * 100}%`,
-                    left: `${Math.random() * 100}%`,
-                    width: `${Math.random() * 150 + 50}px`,
-                    height: `${Math.random() * 150 + 50}px`,
-                    animation: `float ${Math.random() * 10 + 10}s infinite ease-in-out`,
-                    animationDelay: `${Math.random() * 5}s`,
+                    top: bubble.position.top,
+                    left: bubble.position.left,
+                    width: bubble.size.width,
+                    height: bubble.size.height,
+                    // Apply animations only after client-side hydration is complete
+                    ...(isMounted && {
+                      animation: `float ${10 + i * 2}s infinite ease-in-out`,
+                      animationDelay: `${i * 0.8}s`,
+                    }),
                   }}
                 />
               ))}
@@ -188,6 +223,7 @@ export const PortfolioHero: React.FC = () => {
         </Button>
       </div>
 
+      {/* CSS for the float animation */}
       <style jsx>{`
         @keyframes float {
           0%,
